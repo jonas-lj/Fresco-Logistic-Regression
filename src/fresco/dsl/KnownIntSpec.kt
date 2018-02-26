@@ -1,11 +1,11 @@
 package fresco.dsl
 
 import com.winterbe.expekt.expect
-import dk.alexandra.fresco.framework.builder.ProtocolBuilderNumeric
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
+import dk.alexandra.fresco.framework.builder.numeric.ProtocolBuilderNumeric
 
 class KnownIntSpec : Spek({
 

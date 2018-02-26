@@ -1,19 +1,20 @@
 package fresco.dsl
 
-import dk.alexandra.fresco.framework.Computation
-import dk.alexandra.fresco.framework.builder.ProtocolBuilderNumeric
 import dk.alexandra.fresco.framework.value.SInt
 import java.lang.ref.WeakReference
+import dk.alexandra.fresco.framework.builder.numeric.ProtocolBuilderNumeric
+import dk.alexandra.fresco.framework.builder.Computation
+import dk.alexandra.fresco.framework.DRes
 
 interface Expression {
-    fun build(builder: ProtocolBuilderNumeric): Computation<SInt>
+    fun build(builder: ProtocolBuilderNumeric): DRes<SInt>
 }
 
 abstract class Cached : Expression {
-    var latestValue : WeakReference<Computation<SInt>>? = null
+    var latestValue : WeakReference<DRes<SInt>>? = null
     var latestBuilder : WeakReference<ProtocolBuilderNumeric>? = null
 
-    override fun build(builder: ProtocolBuilderNumeric): Computation<SInt> {
+    override fun build(builder: ProtocolBuilderNumeric): DRes<SInt> {
         val possibleResult = latestValue?.get()
         if (latestBuilder?.get() === builder && possibleResult != null) {
             return possibleResult
@@ -25,5 +26,5 @@ abstract class Cached : Expression {
         }
     }
 
-    abstract fun buildThis(builder: ProtocolBuilderNumeric): Computation<SInt>
+    abstract fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt>
 }

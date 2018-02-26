@@ -1,14 +1,15 @@
 package fresco.dsl
 
-import dk.alexandra.fresco.framework.Computation
-import dk.alexandra.fresco.framework.builder.ProtocolBuilderNumeric
-import dk.alexandra.fresco.framework.value.SInt
 import java.math.BigInteger
+import dk.alexandra.fresco.framework.builder.numeric.ProtocolBuilderNumeric
+import dk.alexandra.fresco.framework.builder.Computation
+import dk.alexandra.fresco.framework.value.SInt
+import dk.alexandra.fresco.framework.DRes
 
 class KnownInt(val value: BigInteger): Cached(), IntExpression {
     constructor(value: Int) : this(BigInteger.valueOf(value.toLong()))
 
-    override fun buildThis(builder: ProtocolBuilderNumeric): Computation<SInt> {
+    override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
         return builder.numeric().known(value)
     }
 }
