@@ -76,10 +76,31 @@ private fun evaluate(expression: Expression): BigInteger {
 	val suite = DummyProtocolSuite()
 	val evaluator = BatchedProtocolEvaluator<ResourcePool?>(SequentialStrategy<ResourcePool?>(), suite)
 	val engine = SecureComputationEngineImpl(suite, evaluator)
-	val result = engine.runApplication(DummyApplication(expression), ResourcePoolImpl(1, 2, object : Drbg {
-		override fun nextBytes(bytes: ByteArray?) {
+	val result = engine.runApplication(DummyApplication(expression), object: DummyArithmeticResourcePool {
+		override fun getSerializer(): ByteSerializer<BigInteger>? {
+			return DummySerializer()
 		}
-	}), DummyNetwork())
+
+		override fun getMyId(): Int {
+			return 1
+		}
+
+		override fun getModulus(): BigInteger? {
+			return mod
+		}
+
+		override fun getRandomGenerator(): Drbg? {
+			return object: Drbg {
+				override fun nextBytes(bytes: ByteArray?) {
+					
+				}
+			}
+		}
+
+		override fun getNoOfParties(): Int {
+			return 2;
+		}
+	}, DummyNetwork())
 	return result.toSigned()
 }
 
@@ -107,6 +128,24 @@ private class DummyProtocolSuite : ProtocolSuite<ResourcePool?, ProtocolBuilderN
 
 	override fun createRoundSynchronization(): ProtocolSuite.RoundSynchronization<ResourcePool?>? {
 		return DummyRoundSynchronization()
+	}
+}
+
+private class DummySerializer: ByteSerializer<BigInteger> {
+	override fun deserialize(bytes: ByteArray?): BigInteger? {
+		return BigInteger(bytes);
+	}
+
+	override fun serialize(objects: MutableList<BigInteger>?): ByteArray? {
+		TODO()
+	}
+
+	override fun serialize(x: BigInteger): ByteArray? {
+		return x.toByteArray()
+	}
+
+	override fun deserializeList(bytes: ByteArray?): MutableList<BigInteger>? {
+		TODO()
 	}
 }
 
