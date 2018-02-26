@@ -2,49 +2,58 @@ package fresco.dsl
 
 import dk.alexandra.fresco.framework.value.SInt
 import dk.alexandra.fresco.framework.builder.numeric.ProtocolBuilderNumeric
-import dk.alexandra.fresco.framework.builder.Computation
 import dk.alexandra.fresco.framework.DRes
 
 interface IntExpression : Expression {
-
 	operator fun plus(other: IntExpression): IntExpression {
-		return object : Cached(), IntExpression {
-			override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
-				return builder.numeric().add(this.build(builder), other.build(builder))
-			}
-		}
+		return Add(this, other)
 	}
 
 	operator fun minus(other: IntExpression): IntExpression {
-		return object : Cached(), IntExpression {
-			override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
-				return builder.numeric().sub(this.build(builder), other.build(builder))
-			}
-		}
+		return Subtract(this, other)
 	}
 
 	operator fun times(other: IntExpression): IntExpression {
-		return object : Cached(), IntExpression {
-			override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
-				return builder.numeric().mult(this.build(builder), other.build(builder))
-			}
-		}
+		return Multiply(this, other)
 	}
 
 	operator fun div(other: IntExpression): IntExpression {
-		return object : Cached(), IntExpression {
-			override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
-				return builder.advancedNumeric().div(this.build(builder), other.build(builder))
-			}
-		}
+		return Divide(this, other)
 	}
 }
 
 fun sqrt(expr: IntExpression): IntExpression {
-	return object : Cached(), IntExpression {
-		override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
-			return builder.advancedNumeric().sqrt(expr.build(builder),
-					builder.basicNumericContext.maxBitLength)
-		}
+	return SquareRoot(expr)
+}
+
+private class Add(val left: IntExpression, val right: IntExpression) : Cached(), IntExpression {
+	override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
+		return builder.numeric().add(left.build(builder), right.build(builder))
 	}
 }
+
+class Subtract(val left: IntExpression, val right: IntExpression) : Cached(), IntExpression {
+	override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
+		return builder.numeric().sub(left.build(builder), right.build(builder))
+	}
+}
+
+class Multiply(val left: IntExpression, val right: IntExpression) : Cached(), IntExpression {
+	override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
+		return builder.numeric().mult(left.build(builder), right.build(builder))
+	}
+}
+
+class Divide(val left: IntExpression, val right: IntExpression) : Cached(), IntExpression {
+	override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
+		return builder.advancedNumeric().div(left.build(builder), right.build(builder))
+	}
+}
+
+class SquareRoot(val expr: IntExpression) : Cached(), IntExpression {
+	override fun buildThis(builder: ProtocolBuilderNumeric): DRes<SInt> {
+		return builder.advancedNumeric().sqrt(expr.build(builder),
+				builder.basicNumericContext.maxBitLength)
+	}
+}
+
